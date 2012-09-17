@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Dries Steenhouwer"]
+  s.authors = ["Dries Steenhouwer "]
   s.date = %q{2012-09-17}
   s.description = %q{This gems allow you to create/update members on EMV with the member api}
   s.email = %q{steenhouwer.dries@gmail.com}

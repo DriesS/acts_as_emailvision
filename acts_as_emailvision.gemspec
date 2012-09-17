@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
     "LICENSE.txt",
     "README.md",
     "VERSION",
+    "acts_as_emailvision.gemspec",
     "app/controllers/emailvision_controller.rb",
     "lib/acts_as_emailvision.rb",
     "lib/emailvision/acts/emailvision_subscriber.rb",

@@ -19,7 +19,9 @@ module DriesS
           Emailvision::Api.login        = config['login']
           Emailvision::Api.password     = config['password']
           Emailvision::Api.key          = config['key']       
-          Emailvision::Api.debug        = config['debug']       
+          Emailvision::Api.debug        = config['debug']
+          Emailvision::Api.callback_token = config['callback_token']   
+          Emailvision::Api.callback_url = config['callback_url']        
           
         end     
       end   

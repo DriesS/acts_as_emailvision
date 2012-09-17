@@ -11,20 +11,22 @@ module DriesS
 
       # Attributes
       class << self
-        attr_accessor :token, :server_name, :endpoint, :login, :password, :key, :debug
+        attr_accessor :token, :server_name, :endpoint, :login, :password, :key, :debug, :callback_url, :callback_token
       end
-      attr_accessor :token, :server_name, :endpoint, :login, :password, :key, :debug
+      attr_accessor :token, :server_name, :endpoint, :login, :password, :key, :debug, :callback_url, :callback_token
 
       def initialize(params = {})      
         yield(self) if block_given?      
         
-        self.server_name ||= params[:server_name]  || self.class.server_name
-        self.endpoint    ||= params[:endpoint]     || self.class.endpoint
-        self.login       ||= params[:login]        || self.class.login
-        self.password    ||= params[:password]     || self.class.password
-        self.key         ||= params[:key]          || self.class.key
-        self.token       ||= params[:token]        || self.class.token
-        self.debug       ||= params[:debug]        || self.class.debug      
+        self.server_name  ||= params[:server_name]   || self.class.server_name
+        self.endpoint     ||= params[:endpoint]      || self.class.endpoint
+        self.login        ||= params[:login]         || self.class.login
+        self.password     ||= params[:password]      || self.class.password
+        self.key          ||= params[:key]           || self.class.key
+        self.token        ||= params[:token]         || self.class.token
+        self.callback_url ||= params[:callback_url]  || self.class.callback_url
+        self.callback_token ||= params[:callback_token]  || self.class.callback_token
+        self.debug        ||= params[:debug]         || self.class.debug      
       end   
       
       # ----------------- BEGIN Pre-configured methods -----------------
@@ -99,23 +101,36 @@ module DriesS
         # == Send request ==
         logger.send "#{uri} with query : #{parameters} and body : #{body}"
         puts parameters.inspect
-        response = self.class.send http_verb, uri, :query => parameters, :body => body_xml, :timeout => 30
-        
-        # == Parse response ==
-        http_code = response.header.code
-        content = {}
-        begin
-          content = Crack::XML.parse response.body
-        rescue MultiXml::ParseError => e
-          logger.send "#{uri} Error when parsing response body (#{e.to_s})"
-        end
-        logger.receive content.inspect
 
-        # Return response or raise an exception if request failed
-        if (http_code == "200") and (content and content["response"])
-          content["response"]["result"] || content["response"]
-        else        
-          raise Emailvision::Exception.new "#{http_code} - #{content}"
+        begin
+          response = self.class.send http_verb, uri, :query => parameters, :body => body_xml, :timeout => 30
+          # == Parse response ==
+          http_code = response.header.code
+          content = {}
+          begin
+            content = Crack::XML.parse response.body
+          rescue MultiXml::ParseError => e
+            logger.send "#{uri} Error when parsing response body (#{e.to_s})"
+          end
+          logger.receive content.inspect
+
+          # Return response or raise an exception if request failed
+          if (http_code == "200") and (content and content["response"])
+            content["response"]["result"] || content["response"]
+          else        
+            raise Emailvision::Exception.new "#{http_code} - #{content}"
+          end
+        rescue Emailvision::Exception => e
+          debugger
+          puts e.inspect
+          if e.message =~/Your session has expired/
+            self.close_connection
+            self.open_connection
+            retry
+          end
+        rescue Exception => e
+          debugger 
+          puts e.inspect
         end
       end    
 
@@ -135,6 +150,15 @@ module DriesS
       # Base uri
       def base_uri
         "http://#{server_name}/#{endpoint}/services/rest/"
+      end
+
+      def send_callback(method, params = {})
+        if callback_url
+          @result = HTTParty.post(callback_url.to_str, 
+              :body => { :data => {:email => params[:email]}, :type => method, :token => Digest::SHA1.hexdigest("#{params[:email]}-#{callback_token}")
+                       }.to_json,
+              :headers => { 'Content-Type' => 'application/json' } )
+        end
       end
       
       # Generate call-chain triggers

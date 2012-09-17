@@ -19,7 +19,11 @@ module DriesS
       end
 
       def self.date_format(datetime)
-        date.strftime('%Y-%m-%d')
+        datetime.strftime('%Y-%m-%d')
+      end
+
+      def self.date_format_unsubscribe(datetime)
+        datetime.strftime('%m/%d/%Y')
       end
       
       def self.r_camelize(obj)

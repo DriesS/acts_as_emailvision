@@ -1,6 +1,10 @@
 module DriesS
   module Emailvision
 
+    if defined?(Rails)
+      class Engine < Rails::Engine; end
+    end
+
     def self.included(base)
       base.send(:extend, ClassMethods)
     end
@@ -11,6 +15,9 @@ module DriesS
 
         class_attribute :email_column
         self.email_column =  opts[:email] || 'email'
+
+        class_attribute :confirmed_column
+        self.confirmed_column =  opts[:confirmed]
 
         class_attribute :emailvision_enabled_column
         self.emailvision_enabled_column = opts[:enabled]

@@ -82,6 +82,8 @@ module DriesS
       end
 
       def after_emailvision_subscriber_create
+        return if !self.send(self.confirmed_column.to_sym)
+
         wants_email = self.send(self.emailvision_enabled_column.to_sym)
         if wants_email
           self.subscribe_or_update_emailvision
@@ -89,6 +91,8 @@ module DriesS
       end
 
       def before_emailvision_subscriber_update
+        return if !self.send(self.confirmed_column.to_sym)
+
         wants_email = self.send(self.emailvision_enabled_column.to_sym)
         wants_email_changed = self.send((self.emailvision_enabled_column.to_s + "_changed?").to_sym)
         if wants_email_changed
@@ -105,12 +109,13 @@ module DriesS
           if email_changed || merge_vars_changed?
             old_email = self.send("#{self.email_column}_was") || self.send("#{self.email_column}")
             self.subscribe_or_update_emailvision(old_email)
-            self.resubscribe_emailvision if self.exists_on_emailvision?
+            self.resubscribe_emailvision unless self.exists_on_emailvision?
           end
         end
       end
 
       def after_emailvision_subscriber_destroy
+        return if !self.send(self.confirmed_column.to_sym)
         self.unsubscribe_emailvision
       end
 
@@ -118,18 +123,22 @@ module DriesS
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
         @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call
+        @@emvAPI.send_callback(:subscribe, {:email => email})
+
       end
       
       def unsubscribe_emailvision(email = self[email_column])
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
         @@emvAPI.get.member.unjoinByEmail(:email => email).call
+        @@emvAPI.send_callback(:unsubscribe, {:email => email})
       end
 
       def resubscribe_emailvision(email = self[email_column])
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
         @@emvAPI.get.member.rejoinByEmail(:email => email).call
+        @@emvAPI.send_callback(:subscribe, {:email => email})
       end
 
       def exists_on_emailvision?
@@ -137,6 +146,18 @@ module DriesS
         @@emvAPI.open_connection
         return_object = @@emvAPI.get.member.getMemberByEmail(:email => self[email_column]).call
         !return_object["members"].nil?
+      end
+
+      def is_subscribed_on_emailvision?
+
+        @@emvAPI ||= DriesS::Emailvision::Api.new
+        @@emvAPI.open_connection
+        return_object = @@emvAPI.get.member.getMemberByEmail(:email => self[email_column]).call["members"]
+
+        members = return_object["member"] if return_object
+
+        return members["attributes"]["entry"].find {|h|h["key"]=='DATEUNJOIN'}['value'].nil?
+
       end
       
       if defined?(Delayed::MessageSending) && !Rails.env.test?

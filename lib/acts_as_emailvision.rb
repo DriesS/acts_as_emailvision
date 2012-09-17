@@ -15,6 +15,7 @@ require 'emailvision/acts/emailvision_subscriber'
   
 if defined?(Rails)
   require 'emailvision/api/railtie'
+  require 'emailvision/railtie'
 end
 
-ActiveRecord::Base.send(:include, DriesS::Emailvision)
+ActiveRecord::Base.send(:include, DriesS::Emailvision) # trigger included method in emailvision_subscriber.rb

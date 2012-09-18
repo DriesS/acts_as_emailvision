@@ -59,7 +59,11 @@ module DriesS
       def emailvision_merge_var(key)
         value = self.emailvision_merge_vars[key]
         if value.is_a? Symbol
-          self.send(value)
+          if self.send(value).is_a? Time || self.send(value).is_a? Date 
+            self.send(value).strftime("%m/%d/%Y") 
+          else
+            self.send(value)
+          end
         else
           return value
         end
@@ -112,7 +116,6 @@ module DriesS
           if email_changed || merge_vars_changed? || confirmed_changed
             old_email = self.send("#{self.email_column}_was") || self.send("#{self.email_column}")
             self.subscribe_or_update_emailvision(old_email)
-            self.resubscribe_emailvision if self.exists_on_emailvision?
           end
         end
       end

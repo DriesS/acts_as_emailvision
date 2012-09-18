@@ -23,7 +23,7 @@ module DriesS
         self.emailvision_enabled_column = opts[:enabled]
 
         class_attribute :emailvision_merge_vars
-        self.emailvision_merge_vars = MergeVars.new(&block, opts[:perform_block])
+        self.emailvision_merge_vars = MergeVars.new(opts[:perform_block], &block)
 
         self.send(:include, EmailvisionSubscriber)
       end

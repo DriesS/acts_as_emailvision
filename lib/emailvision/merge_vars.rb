@@ -6,7 +6,7 @@ module DriesS
     class MergeVars
       include Enumerable
 
-      def initialize(&block, perform = true)
+      def initialize(perform = true, &block)
       #def initialize(*options, &block)
         #@options = options.extract_options!
         @options = {}

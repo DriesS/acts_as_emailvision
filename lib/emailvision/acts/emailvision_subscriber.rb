@@ -59,11 +59,7 @@ module DriesS
       def emailvision_merge_var(key)
         value = self.emailvision_merge_vars[key]
         if value.is_a? Symbol
-          if self.send(value).is_a? Time || self.send(value).is_a? Date 
-            self.send(value).strftime("%m/%d/%Y") 
-          else
-            self.send(value)
-          end
+          self.send(value)
         else
           return value
         end

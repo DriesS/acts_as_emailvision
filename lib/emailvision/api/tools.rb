@@ -15,11 +15,11 @@ module DriesS
       end
 
       def self.date_time_format(datetime)
-        datetime.utc.strftime("%Y-%m-%dT%H:%M:%S")
+        datetime.strftime('%m/%d/%Y')
       end
 
       def self.date_format(datetime)
-        datetime.strftime('%Y-%m-%d')
+        datetime.strftime('%m/%d/%Y')
       end
 
       def self.date_format_unsubscribe(datetime)

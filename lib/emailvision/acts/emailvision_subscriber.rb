@@ -79,6 +79,7 @@ module DriesS
         self.emailvision_merge_vars.each { |mv|
           changed ||= emailvision_merge_var_changed?(mv) unless emailvision_merge_var(mv).nil?
         }
+        return changed
       end
 
       def after_emailvision_subscriber_create
@@ -95,6 +96,7 @@ module DriesS
 
         wants_email = self.send(self.emailvision_enabled_column.to_sym)
         wants_email_changed = self.send((self.emailvision_enabled_column.to_s + "_changed?").to_sym)
+
         if wants_email_changed
           if wants_email && self.exists_on_emailvision?
             self.resubscribe_emailvision

@@ -6,11 +6,11 @@ module DriesS
     class MergeVars
       include Enumerable
 
-      def initialize(&block)
+      def initialize(&block, perform = true)
       #def initialize(*options, &block)
         #@options = options.extract_options!
         @options = {}
-        instance_eval(&block) if block_given?
+        instance_eval(&block) if block_given? && perform
       end
 
       def each(&block)

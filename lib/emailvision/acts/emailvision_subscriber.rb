@@ -112,7 +112,7 @@ module DriesS
           if email_changed || merge_vars_changed? || confirmed_changed
             old_email = self.send("#{self.email_column}_was") || self.send("#{self.email_column}")
             self.subscribe_or_update_emailvision(old_email)
-            self.resubscribe_emailvision unless self.exists_on_emailvision?
+            self.resubscribe_emailvision if self.exists_on_emailvision?
           end
         end
       end

@@ -154,9 +154,9 @@ module DriesS
           members = return_object["member"]
           return members["attributes"]["entry"].find {|h|h["key"]=='DATEUNJOIN'}['value'].nil?
         else
-          return false
+          return true
         end
-        
+
       end
       
       if defined?(Delayed::MessageSending) && !Rails.env.test?
@@ -167,3 +167,5 @@ module DriesS
     end
   end
 end
+
+script/delayed_job stop staging && script/delayed_job start staging && touch tmp/restart.txt

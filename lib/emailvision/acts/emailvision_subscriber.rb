@@ -166,6 +166,4 @@ module DriesS
         
     end
   end
-end
-
-script/delayed_job stop staging && script/delayed_job start staging && touch tmp/restart.txt
+end 

@@ -150,10 +150,13 @@ module DriesS
         @@emvAPI.open_connection
         return_object = @@emvAPI.get.member.getMemberByEmail(:email => self[email_column]).call["members"]
 
-        members = return_object["member"] if return_object
-
-        return members["attributes"]["entry"].find {|h|h["key"]=='DATEUNJOIN'}['value'].nil?
-
+        if return_object
+          members = return_object["member"]
+          return members["attributes"]["entry"].find {|h|h["key"]=='DATEUNJOIN'}['value'].nil?
+        else
+          return false
+        end
+        
       end
       
       if defined?(Delayed::MessageSending) && !Rails.env.test?

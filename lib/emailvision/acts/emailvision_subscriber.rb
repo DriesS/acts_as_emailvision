@@ -122,7 +122,7 @@ module DriesS
       def subscribe_or_update_emailvision(email = self[email_column])
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
-        if self.exists_on_emailvision?
+        unless self.exists_on_emailvision?
           @@emvAPI.get.member.rejoinByEmail(:email => email).call
         else
           @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call

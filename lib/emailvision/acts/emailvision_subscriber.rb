@@ -98,9 +98,7 @@ module DriesS
         wants_email_changed = self.send((self.emailvision_enabled_column.to_s + "_changed?").to_sym)
 
         if wants_email_changed
-          if wants_email && self.exists_on_emailvision?
-            self.resubscribe_emailvision
-          elsif wants_email
+          if wants_email
             self.subscribe_or_update_emailvision
           else
             old_email = self.send("#{self.email_column}_was") || self.send("#{self.email_column}")
@@ -124,9 +122,12 @@ module DriesS
       def subscribe_or_update_emailvision(email = self[email_column])
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
-        @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call
+        if self.exists_on_emailvision?
+          @@emvAPI.get.member.rejoinByEmail(:email => email).call
+        else
+          @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call
+        end
         @@emvAPI.send_callback(:subscribe, {:email => email})
-
       end
       
       def unsubscribe_emailvision(email = self[email_column])
@@ -134,13 +135,6 @@ module DriesS
         @@emvAPI.open_connection
         @@emvAPI.get.member.unjoinByEmail(:email => email).call
         @@emvAPI.send_callback(:unsubscribe, {:email => email})
-      end
-
-      def resubscribe_emailvision(email = self[email_column])
-        @@emvAPI ||= DriesS::Emailvision::Api.new
-        @@emvAPI.open_connection
-        @@emvAPI.get.member.rejoinByEmail(:email => email).call
-        @@emvAPI.send_callback(:subscribe, {:email => email})
       end
 
       def exists_on_emailvision?
@@ -165,7 +159,6 @@ module DriesS
       if defined?(Delayed::MessageSending) && !Rails.env.test?
         handle_asynchronously :subscribe_or_update_emailvision
         handle_asynchronously :unsubscribe_emailvision
-        handle_asynchronously :resubscribe_emailvision
       end
         
     end

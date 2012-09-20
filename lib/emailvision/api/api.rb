@@ -121,16 +121,12 @@ module DriesS
             raise Emailvision::Exception.new "#{http_code} - #{content}"
           end
         rescue Emailvision::Exception => e
-          debugger
-          puts e.inspect
           if e.message =~/Your session has expired/
             self.close_connection
             self.open_connection
             retry
           end
         rescue Exception => e
-          debugger 
-          puts e.inspect
         end
       end    
 

@@ -3,7 +3,7 @@ namespace :emailvision  do
   
   task :sync_unsubscribed_people => :environment do
 
-    date = ENV['date'] || Date.today # => "foo"
+    date = ENV['date'] || Date.today
     
     body = {
       :synchro_member => {
@@ -31,7 +31,7 @@ namespace :emailvision  do
     end
 
     User.where(["email in (?) and #{User.emailvision_enabled_column} = ?", email_addresses, true]).each do |user|
-      user.update_column(User.emailvision_enabled_column.to_sym, 0)
+      user.update_attribute(User.emailvision_enabled_column.to_sym, false)
     end
 
   end

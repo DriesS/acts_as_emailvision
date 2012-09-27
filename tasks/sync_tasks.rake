@@ -14,9 +14,9 @@ namespace :emailvision  do
     @@emvAPI ||= DriesS::Emailvision::Api.new
     @@emvAPI.open_connection
     
-    return_object = @@emvAPI.post.member.getMembers(:body => body).call["members"]
+    return_object = @@emvAPI.post.member.getMembers(:body => body).call
 
-    members = return_object["member"] if return_object
+    members = return_object["members"]["member"] if return_object["members"]
 
     email_addresses = Array.new
 

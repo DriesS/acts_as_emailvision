@@ -109,7 +109,11 @@ module DriesS
           confirmed_changed = self.send("#{self.confirmed_column}_changed?")
           if email_changed || merge_vars_changed? || confirmed_changed
             old_email = self.send("#{self.email_column}_was") || self.send("#{self.email_column}")
-            self.subscribe_or_update_emailvision(old_email)
+            if confirmed_changed
+              self.subscribe_or_update_emailvision(old_email)
+            else
+              self.subscribe_or_update_emailvision_with_delay(old_email)
+            end
           end
         end
       end
@@ -137,6 +141,17 @@ module DriesS
         @@emvAPI.send_callback(:unsubscribe, {:email => email})
       end
 
+      def subscribe_or_update_emailvision_with_delay(email = self[email_column])
+        @@emvAPI ||= DriesS::Emailvision::Api.new
+        @@emvAPI.open_connection
+        unless self.is_subscribed_on_emailvision?
+          @@emvAPI.get.member.rejoinByEmail(:email => email).call
+        else
+          @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call
+        end
+        @@emvAPI.send_callback(:subscribe, {:email => email})
+      end
+
       def exists_on_emailvision?
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
@@ -162,6 +177,7 @@ module DriesS
       if defined?(Delayed::MessageSending) && !Rails.env.test?
         handle_asynchronously :subscribe_or_update_emailvision
         handle_asynchronously :unsubscribe_emailvision
+        handle_asynchronously :subscribe_or_update_emailvision_with_delay, :run_at => Proc.new { 5.minutes.from_now }
       end
         
     end

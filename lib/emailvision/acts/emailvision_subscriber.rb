@@ -177,7 +177,7 @@ module DriesS
       if defined?(Delayed::MessageSending) && !Rails.env.test?
         handle_asynchronously :subscribe_or_update_emailvision
         handle_asynchronously :unsubscribe_emailvision
-        handle_asynchronously :subscribe_or_update_emailvision_with_delay, :run_at => Proc.new { 5.minutes.from_now }
+        handle_asynchronously :subscribe_or_update_emailvision_with_delay, :run_at => Proc.new { 2.minutes.from_now }
       end
         
     end

@@ -151,12 +151,18 @@ module DriesS
       def send_callback(method, params = {})
         if callback_url
           sleep 2
-          @result = HTTParty.post(callback_url.to_str, 
-            :body => { 
-              :data => {:email => params[:email]}, :type => method, :token => Digest::SHA1.hexdigest("#{params[:email]}-#{callback_token}")
-            }.to_json,
-            :headers => { 'Content-Type' => 'application/json' } 
-          )
+          begin
+            @result = HTTParty.post(callback_url.to_str, 
+              :body => { 
+                :data => {:email => params[:email]}, :type => method, :token => Digest::SHA1.hexdigest("#{params[:email]}-#{callback_token}")
+              }.to_json,
+              :headers => { 'Content-Type' => 'application/json' } 
+            )
+          rescue Timeout::Error => e
+            #do nothing, drop callback
+          rescue Exception => e
+            raise e
+          end
         end
       end
       

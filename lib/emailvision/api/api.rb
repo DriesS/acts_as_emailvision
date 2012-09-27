@@ -158,7 +158,7 @@ module DriesS
               }.to_json,
               :headers => { 'Content-Type' => 'application/json' } 
             )
-          rescue Timeout::Error => e
+          rescue Errno::ETIMEDOUT => e
             #do nothing, drop callback
           rescue Exception => e
             raise e

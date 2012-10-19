@@ -129,7 +129,7 @@ module DriesS
         if self.is_subscribed_on_emailvision?
           @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call
           @@emvAPI.send_callback(:subscribe, {:email => email})
-        elsif self.exists_on_emailvision
+        elsif self.exists_on_emailvision?
           @@emvAPI.get.member.rejoinByEmail(:email => email).call
           @@emvAPI.send_callback(:subscribe, {:email => email})
         end

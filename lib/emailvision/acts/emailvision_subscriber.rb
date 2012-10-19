@@ -126,12 +126,13 @@ module DriesS
       def subscribe_or_update_emailvision(email = self[email_column])
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
-        unless self.is_subscribed_on_emailvision?
-          @@emvAPI.get.member.rejoinByEmail(:email => email).call
-        else
+        if self.is_subscribed_on_emailvision?
           @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call
+          @@emvAPI.send_callback(:subscribe, {:email => email})
+        elsif self.exists_on_emailvision
+          @@emvAPI.get.member.rejoinByEmail(:email => email).call
+          @@emvAPI.send_callback(:subscribe, {:email => email})
         end
-        @@emvAPI.send_callback(:subscribe, {:email => email})
       end
       
       def unsubscribe_emailvision(email = self[email_column])
@@ -144,12 +145,13 @@ module DriesS
       def subscribe_or_update_emailvision_with_delay(email = self[email_column])
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
-        unless self.is_subscribed_on_emailvision?
-          @@emvAPI.get.member.rejoinByEmail(:email => email).call
-        else
+        if self.is_subscribed_on_emailvision?
           @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call
-        end
-        @@emvAPI.send_callback(:subscribe, {:email => email})
+          @@emvAPI.send_callback(:subscribe, {:email => email})
+        elsif self.exists_on_emailvision?
+          @@emvAPI.get.member.rejoinByEmail(:email => email).call
+          @@emvAPI.send_callback(:subscribe, {:email => email})
+        end 
       end
 
       def exists_on_emailvision?
@@ -163,13 +165,13 @@ module DriesS
 
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
-        return_object = @@emvAPI.get.member.getMemberByEmail(:email => self[email_column]).call["members"]
+        return_object = @@emvAPI.get.member.getMemberByEmail(:email => self[email_column]).call
 
-        if return_object
-          members = return_object["member"]
+        if return_object && return_object["members"]
+          members = return_object["members"]["member"]
           return members["attributes"]["entry"].find {|h|h["key"]=='DATEUNJOIN'}['value'].nil?
         else
-          return true
+          return false
         end
 
       end

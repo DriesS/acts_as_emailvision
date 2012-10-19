@@ -126,11 +126,11 @@ module DriesS
       def subscribe_or_update_emailvision(email = self[email_column])
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
-        if self.is_subscribed_on_emailvision?
-          @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call
-          @@emvAPI.send_callback(:subscribe, {:email => email})
-        elsif self.exists_on_emailvision?
+        if self.exists_on_emailvision? && !self.is_subscribed_on_emailvision?
           @@emvAPI.get.member.rejoinByEmail(:email => email).call
+          @@emvAPI.send_callback(:subscribe, {:email => email})         
+        else
+          @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call
           @@emvAPI.send_callback(:subscribe, {:email => email})
         end
       end
@@ -145,13 +145,13 @@ module DriesS
       def subscribe_or_update_emailvision_with_delay(email = self[email_column])
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
-        if self.is_subscribed_on_emailvision?
+        if self.exists_on_emailvision? && !self.is_subscribed_on_emailvision?
+          @@emvAPI.get.member.rejoinByEmail(:email => email).call
+          @@emvAPI.send_callback(:subscribe, {:email => email})         
+        else
           @@emvAPI.post.member.insertOrUpdateMember(:body => self.to_emv).call
           @@emvAPI.send_callback(:subscribe, {:email => email})
-        elsif self.exists_on_emailvision?
-          @@emvAPI.get.member.rejoinByEmail(:email => email).call
-          @@emvAPI.send_callback(:subscribe, {:email => email})
-        end 
+        end
       end
 
       def exists_on_emailvision?

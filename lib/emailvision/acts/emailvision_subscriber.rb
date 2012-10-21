@@ -158,7 +158,11 @@ module DriesS
         @@emvAPI ||= DriesS::Emailvision::Api.new
         @@emvAPI.open_connection
         return_object = @@emvAPI.get.member.getMemberByEmail(:email => self[email_column]).call
-        !return_object["members"].nil?
+        if return_object
+          !return_object["members"].nil?
+        else
+          false
+        end
       end
 
       def is_subscribed_on_emailvision?

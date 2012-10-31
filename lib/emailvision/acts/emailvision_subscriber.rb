@@ -99,7 +99,7 @@ module DriesS
 
         if wants_email_changed
           if wants_email
-            self.subscribe_or_update_emailvision
+            self.subscribe_or_update_emailvision_with_delay
           else
             old_email = self.send("#{self.email_column}_was") || self.send("#{self.email_column}")
             self.unsubscribe_emailvision(old_email)

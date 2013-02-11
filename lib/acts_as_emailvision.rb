@@ -1,21 +1,12 @@
-require 'httparty'
-require 'logger'
-require 'crack/xml'
-require 'builder'
+require 'emailvision'
 
-require 'emailvision/api/api'
-require 'emailvision/api/exception'
-require 'emailvision/api/logger'
-require 'emailvision/api/relation'
-require 'emailvision/api/tools'
-require 'emailvision/merge_vars'
-require 'emailvision/base'
-require 'emailvision/acts/emailvision_subscriber'
+require 'acts_as_emailvision/merge_vars'
+require 'acts_as_emailvision/base'
+require 'acts_as_emailvision/acts/emailvision_subscriber'
 
   
 if defined?(Rails)
-  require 'emailvision/api/railtie'
-  require 'emailvision/railtie'
+  require 'acts_as_emailvision/railtie'
 end
 
-ActiveRecord::Base.send(:include, DriesS::Emailvision) # trigger included method in emailvision_subscriber.rb
+ActiveRecord::Base.send(:include, DriesS::ActsAsEmailvision) # trigger included method in emailvision_subscriber.rb

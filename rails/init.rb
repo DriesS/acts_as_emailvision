@@ -1,1 +1,1 @@
-require File.join(File.dirname(__FILE__), '..', 'lib', 'emailvision', 'acts', 'emailvision_subscriber')
+require File.join(File.dirname(__FILE__), '..', 'lib', 'acts_as_emailvision', 'acts', 'emailvision_subscriber')

@@ -1,0 +1,48 @@
+# we don't have any test account on EMV
+development:
+    server_name: 
+    login:
+    password: 
+    key: 
+    endpoint:
+    column_name: 
+    debug: 
+    callback_url:
+    callback_token:
+    sync_segment_id:
+
+test:
+    server_name: 
+    login:
+    password: 
+    key: 
+    endpoint:
+    column_name: 
+    debug: 
+    callback_url:
+    callback_token:
+    sync_segment_id:
+
+staging:
+    server_name: 
+    login:
+    password: 
+    key: 
+    endpoint:
+    column_name: 
+    debug: 
+    callback_url:
+    callback_token:
+    sync_segment_id:
+
+production:
+    server_name: 
+    login:
+    password: 
+    key: 
+    endpoint:
+    column_name: 
+    debug: 
+    callback_url:
+    callback_token:
+    sync_segment_id: v

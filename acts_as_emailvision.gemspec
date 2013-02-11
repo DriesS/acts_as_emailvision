@@ -52,20 +52,20 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rest-client>, [">= 0"])
-      s.add_runtime_dependency(%q<httparty>, ["~> 0.8.0"])
       s.add_runtime_dependency(%q<crack>, ["~> 0.3.0"])
       s.add_runtime_dependency(%q<builder>, ["~> 3.0.0"])
+      s.add_runtime_dependency(%q<emailvision>)
     else
       s.add_dependency(%q<rest-client>, [">= 0"])
-      s.add_dependency(%q<httparty>, ["~> 0.8.0"])
       s.add_dependency(%q<crack>, ["~> 0.3.0"])
       s.add_dependency(%q<builder>, ["~> 3.0.0"])
+      s.add_dependency(%q<emailvision>)
     end
   else
     s.add_dependency(%q<rest-client>, [">= 0"])
-    s.add_dependency(%q<httparty>, ["~> 0.8.0"])
     s.add_dependency(%q<crack>, ["~> 0.3.0"])
     s.add_dependency(%q<builder>, ["~> 3.0.0"])
+    s.add_dependency(%q<emailvision>)
   end
 end
 

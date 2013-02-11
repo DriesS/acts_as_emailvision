@@ -6,7 +6,7 @@ class EmailvisionController < ActionController::Base
     requesttype = params[:type]
     token = params[:token]
     data = params[:data]
-    raise DriesS::Emailvision::Exception.new "Callback token not correct" unless token == Digest::SHA1.hexdigest("#{data[:email]}-#{DriesS::Emailvision::Api.callback_token}")
+    raise ::Emailvision::Exception.new "Callback token not correct" unless token == Digest::SHA1.hexdigest("#{data[:email]}-#{User.emv_config[:callback_token]}")
     case requesttype
       when "unsubscribe"
         logger.info "Calling Unsubscribe from web callback for #{data[:email]}"

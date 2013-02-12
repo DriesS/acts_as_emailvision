@@ -4,11 +4,14 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = "ActsAsEmailvision"
+  s.name = %q{acts_as_emailvision}
   s.version = "1.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.date = %q{2013-02-11}
+  s.authors = ["Dries Steenhouwer "]
+  s.date = %q{2013-02-12}
+  s.description = %q{This gems allow you to create/update members on EMV with the member api}
+  s.email = %q{steenhouwer.dries@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE.txt",
     "README.md"
@@ -71,9 +74,11 @@ Gem::Specification.new do |s|
     "tasks/sync_tasks.rake",
     "test_file"
   ]
+  s.homepage = %q{http://github.com/DriesS/acts_as_emailvision}
+  s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.4.1}
-  s.summary = nil
+  s.summary = %q{Subscribe/Unsubscribe users to EMV list}
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
